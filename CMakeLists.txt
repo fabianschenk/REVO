@@ -111,4 +111,4 @@ list(APPEND DATASTRUC_HEADER_FILES "system/system.h" "system/tracker.h" "system/
 list(APPEND SRC_FILES ${SRC_FILES} "main.cpp")
 add_executable(${PROJECT_NAME} ${SRC_FILES} ${HEADER_FILES} ${UTILITY_SRC_FILES} ${UTILITY_HEADER_FILES} ${DATASTRUC_SRC_FILES} ${DATASTRUC_HEADER_FILES})
 message("libuvc_LIBRARIES: ${libuvc_LIBRARIES}, ${LIBS}")
-target_link_libraries(${PROJECT_NAME} ${LIBS})# "/usr/local/lib/libuvc.so")
+target_link_libraries(${PROJECT_NAME} ${LIBS})

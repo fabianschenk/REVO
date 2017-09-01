@@ -296,7 +296,7 @@ void ImgPyramidRGBD::generateColoredPcl(uint lvl, Eigen::MatrixXf& clrPcl, bool 
     }
     const cv::Mat edges = edgesPyr[lvl];
     const cv::Mat depth = depthPyr[lvl];
-    Eigen::Index linIdx = 0;
+    size_t linIdx = 0;
     //Now compute the pcl of the selected points!
     for( int xx=0 ; xx<rgb.cols ; xx++ )
     {
