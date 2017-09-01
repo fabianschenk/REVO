@@ -39,6 +39,7 @@ if (WITH_REALSENSE)
     list(APPEND SRC_FILES "io/realsensesensor.cpp")
     list(APPEND HEADER_FILES "io/realsensesensor.h")
     add_definitions(-DWITH_REALSENSE)
+    list(APPEND LIBS "realsense")
 endif()
 
 find_package(OpenCV 3 REQUIRED opencv_core opencv_videoio opencv_imgcodecs opencv_imgproc opencv_calib3d opencv_highgui)
