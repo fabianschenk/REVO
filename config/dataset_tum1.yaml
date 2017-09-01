@@ -1,0 +1,46 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+
+# Camera calibration and distortion parameters (OpenCV) 
+Camera.fx: 517.306408
+Camera.fy: 516.469215
+Camera.cx: 318.643040
+Camera.cy: 255.313989
+
+Camera.k1: 0.262383
+Camera.k2: -0.953104
+Camera.p1: -0.005358
+Camera.p2: 0.002628
+Camera.k3: 1.163314
+
+Camera.width: 640
+Camera.height: 480
+
+cannyThreshold1: 150
+cannyThreshold2: 100
+
+#dataset
+MainFolder: "/data2/CSI/CSI_SVN/KirasCSISmartCam3D/CSISmartScan3D_Daten/Daten_Testszenen/TUM/freiburg1/"
+#Datasets: ["rgbd_dataset_freiburg1_desk2","rgbd_dataset_freiburg1_xyz"]
+#Datasets: "rgbd_dataset_freiburg1_xyz"
+Datasets: "rgbd_dataset_freiburg1_desk"
+ASSOCIATE: "associate.txt"
+
+#img pyr settings
+#Pyramid Settings: 0 is img resolution (e.g. 640x480), then always factor 2 smaller
+PYR_MIN_LVL: 2
+PYR_MAX_LVL: 0
+DEPTH_MIN: 0.1 #in [m]
+DEPTH_MAX: 5.2 #in [m]
+#Increases robustness by taking edges from higher levels
+#see Schenk et al. BMVC 2017
+USE_EDGE_HIST: 1 
+nPercentage: 0.3
+useDepthTimeStamp: 0
+SKIP_FIRST_N_FRAMES: 0
+READ_N_IMAGES: 200
+DEPTH_SCALE_FACTOR: 5000.0
+DO_RECORD_IMAGES: 0

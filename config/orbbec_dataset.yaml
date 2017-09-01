@@ -1,0 +1,46 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+
+# Camera calibration and distortion parameters (OpenCV) 
+Camera.fx: 595.26451
+Camera.fy: 595.87320
+Camera.cx: 326.33187
+Camera.cy: 239.14180
+
+Camera.k1: 0.262383
+Camera.k2: -0.953104
+Camera.p1: -0.005358
+Camera.p2: 0.002628
+Camera.k3: 1.163314
+
+Camera.width: 640
+Camera.height: 480
+
+cannyThreshold1: 60
+cannyThreshold2: 20
+
+#dataset
+MainFolder: "/data2/CSI/CSI_SVN/Kiras CSISmartCam3D/CSISmartScan3D_Daten/Daten_Testszenen/dataset/deskoteque/"
+#Datasets: ["rgbd_dataset_freiburg1_desk2","rgbd_dataset_freiburg1_xyz"]
+#Datasets: "rgbd_dataset_freiburg1_xyz"
+Datasets: "deskoteque_long"
+ASSOCIATE: "associate.txt"
+
+#img pyr settings
+#Pyramid Settings: 0 is img resolution (e.g. 640x480), then always factor 2 smaller
+PYR_MIN_LVL: 2
+PYR_MAX_LVL: 0
+DEPTH_MIN: 0.1 #in [m]
+DEPTH_MAX: 5.2 #in [m]
+#Increases robustness by taking edges from higher levels
+#see Schenk et al. BMVC 2017
+USE_EDGE_HIST: 1 
+nPercentage: 0.3
+useDepthTimeStamp: 0
+SKIP_FIRST_N_FRAMES: 400
+READ_N_IMAGES: 150
+DEPTH_SCALE_FACTOR: 1000.0
+DO_RECORD_IMAGES: 0

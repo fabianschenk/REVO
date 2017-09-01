@@ -1,0 +1,37 @@
+%YAML:1.0
+
+#--------------------------------------------------------------------------------------------
+# Camera Parameters. Adjust them!
+#--------------------------------------------------------------------------------------------
+
+# Camera calibration and distortion parameters (OpenCV) 
+#From sensor: 613.687 613.895 318.499 239.695
+Camera.fx: 613.687
+Camera.fy: 613.895
+Camera.cx: 318.499
+Camera.cy: 239.695
+
+Camera.k1: 0.0735776
+Camera.k2: -0.138046
+Camera.p1: -0.00130072
+Camera.p2: -0.000273177
+Camera.k3: 0
+
+Camera.width: 640
+Camera.height: 480
+
+cannyThreshold1: 80
+cannyThreshold2: 50
+
+#img pyr settings
+#Pyramid Settings: 0 is img resolution (e.g. 640x480), then always factor 2 smaller
+PYR_MIN_LVL: 2
+PYR_MAX_LVL: 0
+DEPTH_MIN: 0.1 #in [m]
+DEPTH_MAX: 5.2 #in [m]
+#Increases robustness by taking edges from higher levels
+#see Schenk et al. BMVC 2017
+USE_EDGE_HIST: 1 
+INPUT_TYPE: 2
+DEPTH_SCALE_FACTOR: 1000.0
+DO_RECORD_IMAGES: 0
