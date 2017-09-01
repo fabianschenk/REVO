@@ -1,5 +1,7 @@
 # Robust Edge-based Visual Odometry (REVO)
 
+**Please note that the code is still in the testing phase.**
+
 In this work, we present a robust edge-based visual odometry (REVO) system for RGBD sensors. Edges are more stable under varying lighting conditions than raw intensity values, which leads to higher accuracy and robustness in scenes, where feature- or photoconsistency-based approaches often fail. The results show that our method performs best in terms of trajectory accuracy for most of the sequences indicating that edges are suitable for a multitude of scenes.
 
 ## If you use this work, please cite any of the following publications:
@@ -37,8 +39,8 @@ make -j
 ```
 
 ## How to reproduce the results from the paper
-We provide associate files for the [TUM dataset](https://vision.in.tum.de/data/datasets/rgbd-dataset).
-Download the dataset you want to test and specify it in the dataset_tumX.yaml settings file.
+Use the [TUM dataset](https://vision.in.tum.de/data/datasets/rgbd-dataset).
+Download the sequence you want to test and specify it in the dataset_tumX.yaml settings file.
 
 In the "REVO" directory:
 ```bash
