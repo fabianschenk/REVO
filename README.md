@@ -5,8 +5,8 @@
 In this work, we present a robust edge-based visual odometry (REVO) system for RGBD sensors. Edges are more stable under varying lighting conditions than raw intensity values, which leads to higher accuracy and robustness in scenes, where feature- or photoconsistency-based approaches often fail. The results show that our method performs best in terms of trajectory accuracy for most of the sequences indicating that edges are suitable for a multitude of scenes.
 
 ## If you use this work, please cite any of the following publications:
-* **Combining Edge Images and Depth Maps for Robust Visual Odometry**, Schenk Fabian, Fraundorfer Friedrich, BMVC 2017, [pdf](https://pure.tugraz.at/portal/files/10383987/0661.pdf)
-* **Robust Edge-based Visual Odometry using Machine-Learned Edges**, Schenk Fabian, Fraundorfer Friedrich, IROS 2017
+* **Combining Edge Images and Depth Maps for Robust Visual Odometry**, Schenk Fabian, Fraundorfer Friedrich, BMVC 2017, [pdf](https://pure.tugraz.at/portal/files/10383987/0661.pdf),[video](https://youtu.be/uj3rRyqSEnQ)
+* **Robust Edge-based Visual Odometry using Machine-Learned Edges**, Schenk Fabian, Fraundorfer Friedrich, IROS 2017, [pdf](https://pure.tugraz.at/portal/files/11216598/schenk_paper_final.pdf), [video](https://youtu.be/PUTV9vsdpbA)
 
 ## License
 REVO is licensed under the [GNU General Public License Version 3 (GPLv3)](http://www.gnu.org/licenses/gpl.html).
@@ -48,6 +48,9 @@ build/REVO config/revo_settings.yaml config/dataset_tum1.yaml
 ```
 ## Supported Sensors
 For Intel set "WITH_REALSENSE" and for ORBBEC set "WITH_ORBBEC_ASTRA_PRO" and make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
+
+Currently, either Orbbec or RealSense is possible due to conflicting libuvc libraries.
+This should be resolved quite soon.
 
 ### Intel RealSense ZR300
 Install [librealsense](https://github.com/IntelRealSense/librealsense), set the intrinsic parameters in the config file.
