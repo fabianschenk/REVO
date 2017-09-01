@@ -22,8 +22,8 @@
 */
 
 #pragma once
-#include <Eigen/StdVector>
-#include <Eigen/StdDeque>
+//#include <Eigen/StdVector>
+//#include <Eigen/StdDeque>
 #include "../utils/Logging.h"
 #include <pangolin/pangolin.h>
 #include <opencv2/opencv.hpp>
