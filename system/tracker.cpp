@@ -161,7 +161,8 @@ TrackerNew::TrackerStatus TrackerNew::assessTrackingQuality(const Eigen::Matrix4
     }
     float overlapMeasure = 0.0f;
     I3D_LOG(i3d::info) << "outOfBounds: " << outOfBounds ;
-    I3D_LOG(i3d::info) << histogram.size() << " " << overlaps.size();
+    I3D_LOG(i3d::info) << histogram.size() << " " << overlaps.size() << " " << mCurrFrame->frameId;
+
     for (int xx = 0; xx < currEdges.cols;++xx)
         for (int yy = 0; yy < currEdges.rows;++yy)
         {
@@ -183,10 +184,19 @@ TrackerNew::TrackerStatus TrackerNew::assessTrackingQuality(const Eigen::Matrix4
     if (overlapMeasure>=overlaps.at(0) || histogram.size() < 4)// || overlaps.at(histogram.size()-1) > overlaps.at(1)*0.5)
     {
         I3D_LOG(i3d::info) << "No new keyframe!";
+        //output reprojections
+        cv::imwrite("out/M_"+std::to_string(mCurrFrame->frameId)+"_no.png",M);
+        cv::imwrite("out/currEdges"+std::to_string(mCurrFrame->frameId)+"_no.png",currEdges);
+        cv::imwrite("out/currDepth"+std::to_string(mCurrFrame->frameId)+"_no.png",currDepth);
+
         return TRACKER_STATE_OK;
     }
 
     I3D_LOG(i3d::info) << "New keyframe!";
+    //output reprojections
+    cv::imwrite("out/M_"+std::to_string(mCurrFrame->frameId)+"_new.png",M);
+    cv::imwrite("out/currEdges"+std::to_string(mCurrFrame->frameId)+"_new.png",currEdges);
+    cv::imwrite("out/currDepth"+std::to_string(mCurrFrame->frameId)+"_new.png",currDepth);
     return TRACKER_STATE_NEW_KF;
 }
 
@@ -307,6 +317,8 @@ TrackerNew::TrackerStatus TrackerNew::trackFrames(Eigen::Matrix3f &R, Eigen::Vec
     error = INFINITY;
     //std::vector<std::shared_ptr<ImgPyramidRGBD>> testVec;
     //testVec.push_back(currFrame);
+    //Eigen::Matrix3d R_d = R.cast<double>();
+    //Eigen::Vector3d T_d = T.cast<double>();
     Optimizer::ResidualInfo resInfo;
     //for (int lvl = 0; lvl >= mPyrConfig.maxLevel;--lvl)
     for (int lvl = mPyrConfig.PYR_MIN_LVL; lvl >= mPyrConfig.PYR_MAX_LVL;--lvl)
@@ -326,7 +338,8 @@ TrackerNew::TrackerStatus TrackerNew::trackFrames(Eigen::Matrix3f &R, Eigen::Vec
         auto endT = Timer::getTime();
         I3D_LOG(i3d::info) << "Tracking time for lvl "<<lvl<<": " << Timer::getTimeDiffMiS(startT,endT) << "mis";
     }
-
+    //R = R_d.cast<float>();
+    //T = T_d.cast<float>();
     if (mSettings.optimizerSettings.DO_SHOW_DEBUG_IMAGES)
     {
         reprojectRefEdgesToCurrentFrame(refFrame->returnGray(0),currFrame->return3DEdges(0),currFrame->returnK(0),R,T,refFrame->returnEdges(0), "after");
@@ -351,6 +364,9 @@ float TrackerNew::evalCostFunction(const Eigen::Matrix3f& R, const Eigen::Vector
     const Eigen::MatrixXf _3d = mCurrFrame->return3DEdges(minLvl);
     const cv::Size2i size = mCurrFrame->cameraPyr->at(minLvl).returnSize();
     cv::Mat distanceTransform= mRefFrame->returnDistTransform(minLvl);
+    double min,max;
+    cv::minMaxIdx(distanceTransform,&min,&max);
+    cv::imwrite("dist_trans.png",distanceTransform/max*255);
     for( int ir=0 ; ir<_3d.cols() ; ir++ )
     {
         const Eigen::Vector3f pt = _3d.col(ir).head<3>();
@@ -358,6 +374,7 @@ float TrackerNew::evalCostFunction(const Eigen::Matrix3f& R, const Eigen::Vector
         int badCount = 0, goodCount=0;
         newPt[0] = fx * newPt[0]/newPt[2] + cx;
         newPt[1] = fy * newPt[1]/newPt[2] + cy;
+        //I3D_LOG(i3d::info) << ir << ": " << newPt.transpose();
         if (newPt[0] >= 0 && newPt[0] < size.width && newPt[1] >= 0 && newPt[1] < size.height)
         {
             const float residual = distanceTransform.at<float>(floor(newPt[1]),floor(newPt[0]));
@@ -370,5 +387,6 @@ float TrackerNew::evalCostFunction(const Eigen::Matrix3f& R, const Eigen::Vector
             totalCost+=distanceTransform.at<float>(floor(newPt[1]),floor(newPt[0]));
         }
     }
+    //exit(0);
     return totalCost;
 }

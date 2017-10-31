@@ -23,10 +23,11 @@ cannyThreshold1: 60
 cannyThreshold2: 20
 
 #dataset
-MainFolder: "/data2/CSI/CSI_SVN/Kiras CSISmartCam3D/CSISmartScan3D_Daten/Daten_Testszenen/dataset/deskoteque/"
+#MainFolder: "/data2/CSI/CSI_SVN/Kiras CSISmartCam3D/CSISmartScan3D_Daten/Daten_Testszenen/dataset/deskoteque/"
+MainFolder: "/data2/CSI/CSI_SVN/KirasCSISmartCam3D/CSISmartScan3D_Daten/Daten_Testszenen/dataset/orbbec_recordings/"
 #Datasets: ["rgbd_dataset_freiburg1_desk2","rgbd_dataset_freiburg1_xyz"]
 #Datasets: "rgbd_dataset_freiburg1_xyz"
-Datasets: "deskoteque_long"
+Datasets: "staircase"
 ASSOCIATE: "associate.txt"
 
 #img pyr settings
@@ -40,7 +41,7 @@ DEPTH_MAX: 5.2 #in [m]
 USE_EDGE_HIST: 1 
 nPercentage: 0.3
 useDepthTimeStamp: 0
-SKIP_FIRST_N_FRAMES: 400
-READ_N_IMAGES: 150
+SKIP_FIRST_N_FRAMES: 20
+READ_N_IMAGES: 5
 DEPTH_SCALE_FACTOR: 1000.0
 DO_RECORD_IMAGES: 0

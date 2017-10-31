@@ -235,9 +235,10 @@ void Optimizer::calculateWarpUpdate(LGS6 &ls, int goodPoints)
 float Optimizer::trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame, const std::shared_ptr<ImgPyramidRGBD> &currFrame,
                              Eigen::Matrix3f &R, Eigen::Vector3f &T, int lvl, ResidualInfo& resInfo)
 {
-    I3D_LOG(i3d::info) << "Track Frames!";
+    I3D_LOG(i3d::info) << "Track Frames!" << R << " " << T;
     // ============ track frame ============
-    Sophus::SE3d referenceToFrame(R.cast<double>(),T.cast<double>());
+    //Sophus::SE3d referenceToFrame(R.cast<double>(),T.cast<double>());
+    Sophus::SE3f referenceToFrame(R,T);
     lsd_slam::LGS6 ls;
     float lastErr = calcErrorAndBuffers(refFrame,currFrame,R,T,resInfo,lvl);
     //exit(0);
@@ -261,10 +262,11 @@ float Optimizer::trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame, co
             Vector6 inc = A.ldlt().solve(b);
             incTry++;
             // apply increment. pretty sure this way round is correct, but hard to test.
-            Sophus::SE3d new_referenceToFrame = Sophus::SE3d::exp(inc.cast<double>()) * referenceToFrame;
+            //Sophus::SE3d new_referenceToFrame = Sophus::SE3d::exp(inc.cast<double>()) * referenceToFrame;
+            Sophus::SE3f new_referenceToFrame = Sophus::SE3f::exp(inc) * referenceToFrame;
             // re-evaluate residual
-            float error = calcErrorAndBuffers(refFrame,currFrame,new_referenceToFrame.rotationMatrix().cast<float>(),
-                                              new_referenceToFrame.translation().cast<float>(),resInfo,lvl);
+            float error = calcErrorAndBuffers(refFrame,currFrame,new_referenceToFrame.rotationMatrix()/*.cast<float>()*/,
+                                              new_referenceToFrame.translation()/*.cast<float>()*/,resInfo,lvl);
             I3D_LOG(i3d::detail) << "After calcResidualAndBuffersEdges: " << error;
             I3D_LOG(i3d::info) <<"goodPts: " << resInfo.goodPtsEdges << " bad: " << resInfo.badPtsEdges << " tot: " << resInfo.goodPtsEdges+resInfo.badPtsEdges<<" error = "<< error <<"=" << resInfo.sumErrorWeighted << "/" << resInfo.goodPtsEdges;
             // accept inc?
@@ -280,8 +282,8 @@ float Optimizer::trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame, co
                     //final_uncertainty = uncertainty;
                 }
                 last_residual = lastErr = error;
-                if(LM_lambda <= 0.2)
-                    LM_lambda = 0;
+                if(LM_lambda <= 0.2f)
+                    LM_lambda = 0.0f;
                 else
                     LM_lambda *= mSettings.lambdaSuccessFac;
                 //I3D_LOG(i3d::info) << "Increment accepted: " << inc.transpose();
@@ -295,15 +297,92 @@ float Optimizer::trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame, co
                     iteration = mSettings.maxItsPerLvl[lvl];
                     break;
                 }
-                if(LM_lambda == 0)
-                    LM_lambda = 0.2;
+                if(LM_lambda == 0.0f)
+                    LM_lambda = 0.2f;
                 else
                     LM_lambda *= std::pow(mSettings.lambdaFailFac, incTry);
             }
         }
         I3D_LOG(i3d::info) << "incTry: " << incTry;
     }
-    R = referenceToFrame.rotationMatrix().cast<float>();
-    T = referenceToFrame.translation().cast<float>();
+    R = referenceToFrame.rotationMatrix();//.cast<float>();
+    T = referenceToFrame.translation();//.cast<float>();
     return last_residual;
 }
+
+
+//float Optimizer::trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame, const std::shared_ptr<ImgPyramidRGBD> &currFrame,
+//                             Eigen::Matrix3d &R, Eigen::Vector3d &T, int lvl, ResidualInfo& resInfo)
+//{
+//    I3D_LOG(i3d::info) << "Track Frames!" << R << " " << T;
+//    // ============ track frame ============
+//    Sophus::SE3d referenceToFrame(R,T);
+//    lsd_slam::LGS6 ls;
+//    float lastErr = calcErrorAndBuffers(refFrame,currFrame,R.cast<float>(),T.cast<float>(),resInfo,lvl);
+//    //exit(0);
+//    float last_residual = lastErr;
+//    float LM_lambda = mSettings.lambdaInitial[lvl];
+//    I3D_LOG(i3d::info) << "LM_lambda: " << LM_lambda;
+//    //int iterationNumber = 0;
+//    ///NOTE: We might need MAX_LVL-lvl or something like that
+//    for(int iteration=0; iteration < mSettings.maxItsPerLvl[lvl]; iteration++)
+//    {
+//        calculateWarpUpdate(ls,resInfo.goodPtsEdges);
+//        int incTry=0;
+//        I3D_LOG(i3d::info) << "calculateWarpUpdate:" << resInfo.goodPtsEdges;
+//        while(true)
+//        {
+//            // solve LS system with current lambda
+//            Vector6 b = -ls.b;
+//            Matrix6x6 A = ls.A;
+//            //I3D_LOG(i3d::info)  << "Before lambda A: " <<A << "b: "<<b.transpose() << LM_lambda;
+//            for(int i=0;i<6;i++) A(i,i) *= 1+LM_lambda;
+//            Vector6 inc = A.ldlt().solve(b);
+//            incTry++;
+//            // apply increment. pretty sure this way round is correct, but hard to test.
+//            Sophus::SE3d new_referenceToFrame = Sophus::SE3d::exp(inc.cast<double>()) * referenceToFrame;
+//            // re-evaluate residual
+//            float error = calcErrorAndBuffers(refFrame,currFrame,new_referenceToFrame.rotationMatrix().cast<float>(),
+//                                              new_referenceToFrame.translation().cast<float>(),resInfo,lvl);
+//            I3D_LOG(i3d::detail) << "After calcResidualAndBuffersEdges: " << error;
+//            I3D_LOG(i3d::info) <<"goodPts: " << resInfo.goodPtsEdges << " bad: " << resInfo.badPtsEdges << " tot: " << resInfo.goodPtsEdges+resInfo.badPtsEdges<<" error = "<< error <<"=" << resInfo.sumErrorWeighted << "/" << resInfo.goodPtsEdges;
+//            // accept inc?
+//            if(error < lastErr)
+//            {
+//                // accept inc
+//                referenceToFrame = new_referenceToFrame;
+//                // converged?
+//                if(error / lastErr > mSettings.convergenceEps[lvl])
+//                {
+//                    I3D_LOG(i3d::debug) << "(" << lvl <<", "<< iteration<< "," << error / lastErr <<" ): FINISHED pyramid level (last residual reduction too small).";
+//                    iteration = mSettings.maxItsPerLvl[lvl];
+//                    //final_uncertainty = uncertainty;
+//                }
+//                last_residual = lastErr = error;
+//                if(LM_lambda <= 0.2)
+//                    LM_lambda = 0;
+//                else
+//                    LM_lambda *= mSettings.lambdaSuccessFac;
+//                //I3D_LOG(i3d::info) << "Increment accepted: " << inc.transpose();
+//                break;
+//            }
+//            else
+//            {
+//                if(!(inc.dot(inc) > mSettings.stepSizeMin[lvl]))
+//                {
+//                    I3D_LOG(i3d::debug) << "(" << lvl <<", "<< iteration<<"): FINISHED pyramid level (stepsize too small).";
+//                    iteration = mSettings.maxItsPerLvl[lvl];
+//                    break;
+//                }
+//                if(LM_lambda == 0)
+//                    LM_lambda = 0.2;
+//                else
+//                    LM_lambda *= std::pow(mSettings.lambdaFailFac, incTry);
+//            }
+//        }
+//        I3D_LOG(i3d::info) << "incTry: " << incTry;
+//    }
+//    R = referenceToFrame.rotationMatrix();//.cast<float>();
+//    T = referenceToFrame.translation();//.cast<float>();
+//    return last_residual;
+//}

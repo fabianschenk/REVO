@@ -27,6 +27,7 @@
 #include <fstream>
 #ifdef WITH_ORBBEC_ASTRA_PRO
     #include "../orbbec_astra_pro/OrbbecAstraEngineUVC.h"
+    #include "../orbbec_astra_pro/OrbbecAstraEngineFFMPEG.h"
 #endif
 #ifdef WITH_REALSENSE
     #include "realsensesensor.h"
@@ -161,7 +162,11 @@ private:
     //different modalities
     void generateImgPyramidFromFiles();
 #ifdef WITH_ORBBEC_ASTRA_PRO
-    std::unique_ptr<OrbbecAstraEngine> orbbecSensor;
+    #ifdef WITH_FFMPEG
+        std::unique_ptr<OrbbecAstraEngineFFMPEG> orbbecSensor;
+    #else
+        std::unique_ptr<OrbbecAstraEngine> orbbecSensor;
+    #endif
 #endif
 #ifdef WITH_REALSENSE
     std::unique_ptr<RealsenseSensor> realSenseSensor;

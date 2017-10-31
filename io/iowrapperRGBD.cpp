@@ -35,7 +35,11 @@ IOWrapperRGBD::IOWrapperRGBD(const IOWrapperSettings& settings, const ImgPyramid
         //bool t = astra.isInitSuccess();
         I3D_LOG(i3d::info) << "After astra normal!";
         //orbbecSensor = std::unique_ptr<OrbbecAstraEngine>(&astra);
+#ifdef WITH_FFMPEG
+        orbbecSensor = std::unique_ptr<OrbbecAstraEngineFFMPEG>(new OrbbecAstraEngineFFMPEG());
+#else
         orbbecSensor = std::unique_ptr<OrbbecAstraEngine>(new OrbbecAstraEngine());
+#endif
         mInitSuccess = orbbecSensor->isInitSuccess();
         I3D_LOG(i3d::info) << "After astra normal!";
     }

@@ -21,6 +21,8 @@
 #include "../utils/timer.h"
 #include <iomanip>
 #include <unistd.h>
+#include <numeric>
+#include <sophus/se3.hpp>
 REVO::REVO(const std::string& settingsFile, const std::string& dataSettings,int nRuns = 0):
     mSettings(settingsFile,dataSettings,nRuns), camPyr(new CameraPyr(mSettings.settingsPyr))//,windowedOptimization(mSettings.settingsWO)
 {
@@ -98,6 +100,7 @@ bool REVO::start()
     //previous frame
     //reference/key frame
     std::shared_ptr<ImgPyramidRGBD> kfPyr, prevPyr, currPyr;
+
 
     Eigen::Matrix4f T_NM1_N = Eigen::Matrix4f::Identity();
     //ImgPyramidRGBD prevPyr(mConfig.pyrConfig,mCamPyr);

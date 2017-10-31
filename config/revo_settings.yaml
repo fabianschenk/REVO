@@ -12,7 +12,7 @@ USE_EDGE_FILTER: 1
 N_FRAMES_HIST_VOTING: 3
 
 #Output Settings
-DO_OUTPUT_POSES: 0 #typically in TUM Format
+DO_OUTPUT_POSES: 1 #typically in TUM Format
 
 
 

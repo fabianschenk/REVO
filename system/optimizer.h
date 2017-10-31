@@ -167,6 +167,8 @@ public:
     ~Optimizer();
     float trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame,const std::shared_ptr<ImgPyramidRGBD> &currFrame,
                                  Eigen::Matrix3f &R, Eigen::Vector3f &T, int lvl, ResidualInfo& resInfo);
+    //float trackFrames(const std::shared_ptr<ImgPyramidRGBD> &refFrame, const std::shared_ptr<ImgPyramidRGBD> &currFrame,
+    //                             Eigen::Matrix3d &R, Eigen::Vector3d &T, int lvl, ResidualInfo& resInfo);
     //Bilinear interpolation
     inline Eigen::Vector3f getInterpolatedElement43(const Eigen::Vector4f* const mat, const float x, const float y, const int width) const
     {
