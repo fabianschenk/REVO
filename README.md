@@ -39,13 +39,20 @@ make -j
 ```
 
 ## How to reproduce the results from the paper
-Use the [TUM dataset](https://vision.in.tum.de/data/datasets/rgbd-dataset).
-Download the sequence you want to test and specify it in the dataset_tumX.yaml settings file.
+### [TUM dataset](https://vision.in.tum.de/data/datasets/rgbd-dataset)
+Download the sequence you want to test and specify the "associate.txt" file in the dataset_tumX.yaml settings file.
 
+To generate an "associate.txt" file, first download the "associate.py" script from [TUM RGBD Tools](https://svncvpr.in.tum.de/cvpr-ros-pkg/trunk/rgbd_benchmark/rgbd_benchmark_tools/src/rgbd_benchmark_tools/) and then run
+```bash
+python associate.py DATASET_XXX/rgb.txt DATASET_XXX/depth.txt > associate.txt
+```
+in the folder, where your dataset is.
+ 
 In the "REVO" directory:
 ```bash
 build/REVO config/revo_settings.yaml config/dataset_tum1.yaml
 ```
+For evaluation of the absolute trajectory error (ATE) and relative pose error (RPE) download the corresponding scripts from [TUM RGBD Tools](https://svncvpr.in.tum.de/cvpr-ros-pkg/trunk/rgbd_benchmark/rgbd_benchmark_tools/src/rgbd_benchmark_tools/).
 ## Supported Sensors
 For Intel set "WITH_REALSENSE" and for ORBBEC set "WITH_ORBBEC_ASTRA_PRO" and make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
 
@@ -74,6 +81,9 @@ cmake . ..
 make -j
 make install
 ```
-
+## Troubleshooting
+### Sophus
+There was a problem with the old REVO version and a new Sophus version that introduced orthogonality checks for rotation matrices. 
+If you face such an error, simply check out the current version of REVO.
 
 
