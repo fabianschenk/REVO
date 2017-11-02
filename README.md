@@ -15,7 +15,7 @@ If you want to use this software commercially, please contact us.
 ## Building the framework
 So far, the framework has only been built and tested on the following system.
 ### Requirements
-* [Ubuntu 16.04](https://www.ubuntu.com/)
+* [Ubuntu 16.04, 15.10, 17.04](https://www.ubuntu.com/)
 * [OpenCV > 3](http://opencv.org/)
 * [Eigen > 3.3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
 * [Sophus](https://github.com/strasdat/Sophus)
@@ -64,6 +64,13 @@ Install [librealsense](https://github.com/IntelRealSense/librealsense), set the 
 This framework was tested with the Intel RealSense ZR300.
 
 ### Orbbec Astra Pro Sensor
+#### With FFMPEG
+Install the newest FFMPEG version
+```bash
+sudo apt install ffmpeg
+```
+or download from [FFMPEG Github](https://www.ffmpeg.org/download.html).
+#### With LibUVC (not recommended)
 The standard OpenNI driver can only access the depth stream of the [Orbbec Astra Pro Sensor](https://orbbec3d.com/product-astra-pro/), thus we have to access the color stream like a common webcam.
 *Note: We use libuvc because the standard webcam interface of [OpenCV](http://opencv.org/) buffers the images and doesn't always return the newest image.*
 
