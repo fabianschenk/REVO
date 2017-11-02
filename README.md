@@ -54,7 +54,7 @@ build/REVO config/revo_settings.yaml config/dataset_tum1.yaml
 ```
 For evaluation of the absolute trajectory error (ATE) and relative pose error (RPE) download the corresponding scripts from [TUM RGBD Tools](https://svncvpr.in.tum.de/cvpr-ros-pkg/trunk/rgbd_benchmark/rgbd_benchmark_tools/src/rgbd_benchmark_tools/).
 ## Supported Sensors
-For Intel set "WITH_REALSENSE" and for ORBBEC set "WITH_ORBBEC_ASTRA_PRO" and make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
+For Intel set "WITH_REALSENSE" and for ORBBEC set "WITH_ORBBEC_FFMPEG" (recommended) or "WITH_ORBBEC_UVC" and make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
 
 Currently, either Orbbec or RealSense is possible due to conflicting libuvc libraries.
 This should be resolved quite soon.
@@ -65,6 +65,7 @@ This framework was tested with the Intel RealSense ZR300.
 
 ### Orbbec Astra Pro Sensor
 #### With FFMPEG
+The standard OpenNI driver can only access the depth stream of the [Orbbec Astra Pro Sensor](https://orbbec3d.com/product-astra-pro/), thus we have to access the color stream via FFMPEG.
 Install the newest FFMPEG version
 ```bash
 sudo apt install ffmpeg
