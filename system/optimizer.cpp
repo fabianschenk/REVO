@@ -33,11 +33,11 @@
 
 
 
-void printm128(const __m128& t1, const std::string txt)
-{
-    //return;
-    I3D_LOG(i3d::info) << std::fixed << txt << ": " << t1[0] <<", "<< t1[1]<< ", " << t1[2] << ", " << t1[3];
-}
+//void printm128(const __m128& t1, const std::string txt)
+//{
+//    //return;
+//    I3D_LOG(i3d::info) << std::fixed << txt << ": " << t1[0] <<", "<< t1[1]<< ", " << t1[2] << ", " << t1[3];
+//}
 void reprojectRefEdgesToCurrentFrameop(const cv::Mat& rgbCurr,const Eigen::MatrixXf& _3d, const Eigen::Matrix3f& K,
                                         const Eigen::Matrix3f& R, const Eigen::Vector3f &t, const cv::Mat& edgesCurr,
                                         const std::string title);
