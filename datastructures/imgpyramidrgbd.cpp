@@ -166,7 +166,7 @@ float ImgPyramidRGBD::generateDistHistogram(const cv::Mat& edges, int PATCH_SIZE
     //int max_dist = PATCH_SIZE*PATCH_SIZE;
     return float(nDist)/float(dist.total());
     //cv::imshow("dist",dist*(255.0/max_dist));
-    cv::imwrite("dist_"+std::to_string(PATCH_SIZE)+".png",dist);
+    //cv::imwrite("dist_"+std::to_string(PATCH_SIZE)+".png",dist);
 //    cv::imwrite("edge_"+std::to_string(PATCH_SIZE)+".png",edges);
 //    cv::waitKey(0);
 }
