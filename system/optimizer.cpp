@@ -49,25 +49,25 @@ Optimizer::Optimizer(const OptimizerSettings &settings): mSettings(settings)
     const int w = mSettings.maxImgSize.width;
     const int h = mSettings.maxImgSize.height;
     size_t memSize = w * h * sizeof(float) * 1;//settings.nCamsToOptimize * 2;
-    buf_warped_residual = (float*)Eigen::internal::aligned_malloc(memSize);
-    buf_warped_dx = (float*)Eigen::internal::aligned_malloc(memSize);
-    buf_warped_dy = (float*)Eigen::internal::aligned_malloc(memSize);
-    buf_warped_x = (float*)Eigen::internal::aligned_malloc(memSize);
-    buf_warped_y = (float*)Eigen::internal::aligned_malloc(memSize);
-    buf_warped_z = (float*)Eigen::internal::aligned_malloc(memSize);
-    buf_weight_p = (float*)Eigen::internal::aligned_malloc(memSize);
+    buf_warped_residual = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
+    buf_warped_dx = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
+    buf_warped_dy = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
+    buf_warped_x = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
+    buf_warped_y = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
+    buf_warped_z = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
+    buf_weight_p = static_cast<float*>(Eigen::internal::aligned_malloc(memSize));
     auto endOpt = Timer::getTime();
     I3D_LOG(i3d::info) << "END Constructing Optimizer" << Timer::getTimeDiffMiS(startOpt,endOpt);
 }
 Optimizer::~Optimizer()
 {
-    Eigen::internal::aligned_free((void*)buf_warped_residual);
-    Eigen::internal::aligned_free((void*)buf_warped_dx);
-    Eigen::internal::aligned_free((void*)buf_warped_dy);
-    Eigen::internal::aligned_free((void*)buf_warped_x);
-    Eigen::internal::aligned_free((void*)buf_warped_y);
-    Eigen::internal::aligned_free((void*)buf_warped_z);
-    Eigen::internal::aligned_free((void*)buf_weight_p);
+    Eigen::internal::aligned_free(static_cast<void*>(buf_warped_residual));
+    Eigen::internal::aligned_free(static_cast<void*>(buf_warped_dx));
+    Eigen::internal::aligned_free(static_cast<void*>(buf_warped_dy));
+    Eigen::internal::aligned_free(static_cast<void*>(buf_warped_x));
+    Eigen::internal::aligned_free(static_cast<void*>(buf_warped_y));
+    Eigen::internal::aligned_free(static_cast<void*>(buf_warped_z));
+    Eigen::internal::aligned_free(static_cast<void*>(buf_weight_p));
 }
 
 //think about filling up the buffers

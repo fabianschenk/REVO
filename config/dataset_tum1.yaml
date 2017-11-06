@@ -25,8 +25,8 @@ cannyThreshold2: 100
 #dataset
 MainFolder: "/data2/CSI/CSI_SVN/KirasCSISmartCam3D/CSISmartScan3D_Daten/Daten_Testszenen/TUM/freiburg1/"
 #Datasets: ["rgbd_dataset_freiburg1_desk2","rgbd_dataset_freiburg1_xyz"]
-#Datasets: "rgbd_dataset_freiburg1_xyz"
-Datasets: "rgbd_dataset_freiburg1_desk"
+Datasets: "rgbd_dataset_freiburg1_xyz"
+#Datasets: "rgbd_dataset_freiburg1_desk"
 ASSOCIATE: "associate.txt"
 
 #img pyr settings
