@@ -58,6 +58,7 @@ REVO supports three different sensors at the moment:
 * [Orbbec Astra Pro Sensor](https://orbbec3d.com/product-astra-pro/)
 * [Orbbec Astra Sensor](https://orbbec3d.com/product-astra/)
 * [Intel Realsense ZR300 (other versions are untested!)](https://click.intel.com/intelr-realsensetm-development-kit-featuring-the-zr300.html)
+
 For the Intel sensor set "WITH_REALSENSE", for the Orbbec Astra Pro set "WITH_ORBBEC_FFMPEG" (recommended) or "WITH_ORBBEC_UVC" (not recommended, requires third party tools) and for the non-pro Orbbec Astra set "WITH_ORBBEC_OPENNI"!
 Note: Make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
 
@@ -104,6 +105,7 @@ make install
 ```
 ## Troubleshooting
 ### Sophus
-* There was a problem with the old REVO version and a new Sophus version that introduced orthogonality checks for rotation matrices. If you face such an error, simply check out the current version of REVO.
-
-* If WITH_ORRBEC_UVC is set, there is a conflict with the librealsense! To solve this issue, use WITH_ORBBEC_FFMPEG!
+There was a problem with the old REVO version and a new Sophus version that introduced orthogonality checks for rotation matrices. 
+If you face such an error, simply check out the current version of REVO.
+### Orbbec with LIBUVC and Intel Realsense
+If WITH_ORRBEC_UVC is set, there is a conflict with the librealsense! To solve this issue, use WITH_ORBBEC_FFMPEG!
