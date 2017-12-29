@@ -156,7 +156,7 @@ void Viewer::Run()
         }
         if(CheckFinish())
             break;
-        usleep(100000);
+        usleep(1000);
     }
     I3D_LOG(i3d::debug) << "Stop";
     if (mSaveModel)
