@@ -155,7 +155,7 @@ public:
     // 3. optimization structure
     void prepareKfForStorage()
     {
-        mIsStored = true;
+        mIsStored = true; //this issue will be resolved in a future version
         //make sure that we have a keyframe
         if (dtPyr.size() == 0 || mIsStored) return;
         //we probably need the distance transform and the 3D edges
