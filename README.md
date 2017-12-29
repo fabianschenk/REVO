@@ -60,7 +60,7 @@ REVO supports three different sensors at the moment:
 * [Intel Realsense ZR300 (other versions are untested!)](https://click.intel.com/intelr-realsensetm-development-kit-featuring-the-zr300.html)
 
 For the Intel sensor set "WITH_REALSENSE", for the Orbbec Astra Pro set "WITH_ORBBEC_FFMPEG" (recommended) or "WITH_ORBBEC_UVC" (not recommended, requires third party tools) and for the non-pro Orbbec Astra set "WITH_ORBBEC_OPENNI"!
-Note: Make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
+**Note:** Make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
 
 REVO can be compiled for all three sensors only if WITH_REALSENSE, WITH_ORBBEC_FFMPEG and WITH_ORBBEC_OPENNI are set.
 If WITH_ORRBEC_UVC is set, there is a conflict with the librealsense!
@@ -68,6 +68,8 @@ To solve this issue, use WITH_ORBBEC_FFMPEG!
 
 The sensor to be used is determined from the INPUT_TYPE set in the second config file.
 For Orbbec Astra Pro INPUT_TYPE: 1, for Intel Realsense INPUT_TYPE: 2 and for Orbbec Astra INPUT_TYPE: 3.
+
+Example config files for all three sensors can be found in the config directory!
 ### Intel RealSense ZR300
 Install [librealsense](https://github.com/IntelRealSense/librealsense), set the intrinsic parameters in the config file.
 This framework was tested with the Intel RealSense ZR300.
