@@ -71,26 +71,17 @@ extern "C" {
 [dshow @ 00000000025324a0]   vcodec=mjpeg  min s=160x120 fps=15 max s=160x120 fps=30
 [dshow @ 00000000025324a0]   vcodec=mjpeg  min s=160x120 fps=15 max s=160x120 fps=30
 */
-// Sensor class for Orbbec AstraPro Sensor
-// Depth sensor is accessed via OpenNI2
-// Color camera is mounted as standard RGB camera
-
-class OrbbecAstraProEngineFFMPEG// : public ImageSourceEngine
+// Sensor class for Orbbec Astra Sensor
+class OrbbecAstraOpenNIEngine
 {
 public:
     class PrivateData;
 private:
     SwsContext* img_convert_ctx;
-    //class PrivateData;
     PrivateData *data;
-    cv::Size2i imageSize_rgb, imageSize_d;
+    cv::Point2i imageSize_rgb, imageSize_d;
     bool colorAvailable, depthAvailable;
-    //bool initUVCRGB();
-    bool initFFMPEG_RGB();
-    bool initOpenNIDepth();
-    //flas that indicate, if openNI or FFMPEG has been successfully initialized
-    bool init_openni = false;
-    bool init_ffmpeg = false;
+
     std::string rgbDeviceURI, depthDeviceURI;
     /**
      * @brief readFramesThread reads continuously frames from FFMPEG
@@ -111,22 +102,22 @@ private:
 
     int imagesReadThread, imagesGet;
 public:
-    OrbbecAstraProEngineFFMPEG();
-    ~OrbbecAstraProEngineFFMPEG();
+    OrbbecAstraOpenNIEngine();
+    ~OrbbecAstraOpenNIEngine();
     inline bool isInitSuccess()
     {
-        return init_openni && init_ffmpeg;
+        return  this->colorAvailable && this->depthAvailable;
     }
 
     bool hasMoreImages(void);
     bool getImages(cv::Mat &rgbImage, cv::Mat &rawDepthImage, const float depthScaleFactor);
     //void readRGBFrame(cv::Mat &rgbImage);
-    inline const cv::Size2i& getDepthImageSize(void) const
+    inline const cv::Size2i getDepthImageSize(void) const
     {
         return imageSize_d;
     }
 
-    inline const cv::Size2i& getRGBImageSize(void) const
+    inline const cv::Size2i getRGBImageSize(void) const
     {
         return imageSize_rgb;
     }

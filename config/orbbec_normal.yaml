@@ -31,6 +31,9 @@ DEPTH_MAX: 5.2 #in [m]
 #Increases robustness by taking edges from higher levels
 #see Schenk et al. BMVC 2017
 USE_EDGE_HIST: 1 
-INPUT_TYPE: 1
+INPUT_TYPE: 3
 DEPTH_SCALE_FACTOR: 1000.0
-DO_RECORD_IMAGES: 0
+DO_RECORD_IMAGES: 1
+DO_ADAPT_CANNY_VALUES: 0
+DO_WAIT_AUTOEXP: 0
+IMG_FORMAT_BGRA: 1

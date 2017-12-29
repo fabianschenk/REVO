@@ -54,14 +54,27 @@ build/REVO config/revo_settings.yaml config/dataset_tum1.yaml
 ```
 For evaluation of the absolute trajectory error (ATE) and relative pose error (RPE) download the corresponding scripts from [TUM RGBD Tools](https://svncvpr.in.tum.de/cvpr-ros-pkg/trunk/rgbd_benchmark/rgbd_benchmark_tools/src/rgbd_benchmark_tools/).
 ## Supported Sensors
-For Intel set "WITH_REALSENSE" and for ORBBEC set "WITH_ORBBEC_FFMPEG" (recommended) or "WITH_ORBBEC_UVC" and make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
+REVO supports three different sensors at the moment:
+* [Orbbec Astra Pro Sensor](https://orbbec3d.com/product-astra-pro/)
+* [Orbbec Astra Sensor](https://orbbec3d.com/product-astra/)
+* [Intel Realsense ZR300 (other versions are untested!)](https://click.intel.com/intelr-realsensetm-development-kit-featuring-the-zr300.html)
+For the Intel sensor set "WITH_REALSENSE", for the Orbbec Astra Pro set "WITH_ORBBEC_FFMPEG" (recommended) or "WITH_ORBBEC_UVC" (not recommended, requires third party tools) and for the non-pro Orbbec Astra set "WITH_ORBBEC_OPENNI"!
+Note: Make sure that you set the USB rules in a way that the sensor is accessible for every user (default is root only).
 
-Currently, either Orbbec or RealSense is possible due to conflicting libuvc libraries.
-This should be resolved quite soon.
+REVO can be compiled for all three sensors only if WITH_REALSENSE, WITH_ORBBEC_FFMPEG and WITH_ORBBEC_OPENNI are set.
+If WITH_ORRBEC_UVC is set, there is a conflict with the librealsense!
+To solve this issue, use WITH_ORBBEC_FFMPEG!
 
+The sensor to be used is determined from the INPUT_TYPE set in the second config file.
+For Orbbec Astra Pro INPUT_TYPE: 1, for Intel Realsense INPUT_TYPE: 2 and for Orbbec Astra INPUT_TYPE: 3.
 ### Intel RealSense ZR300
 Install [librealsense](https://github.com/IntelRealSense/librealsense), set the intrinsic parameters in the config file.
 This framework was tested with the Intel RealSense ZR300.
+
+### Orbbec Astra Sensor
+The (non-pro) Orbbec Astra Sensor can be fully accessed by Orbbec's OpenNI driver.
+First [download the openni driver](https://orbbec3d.com/develop/#registergestoos) and choose the correct *.zip file that matches your architecture, e.g. OpenNI-Linux_x64-2.3.zip. 
+Extract it and copy libOpenNI2.so and the "Include" and "OpenNI2" folder to REVO_FOLDER/orbbec_astra_pro/drivers. 
 
 ### Orbbec Astra Pro Sensor
 #### With FFMPEG
@@ -91,7 +104,6 @@ make install
 ```
 ## Troubleshooting
 ### Sophus
-There was a problem with the old REVO version and a new Sophus version that introduced orthogonality checks for rotation matrices. 
-If you face such an error, simply check out the current version of REVO.
+* There was a problem with the old REVO version and a new Sophus version that introduced orthogonality checks for rotation matrices. If you face such an error, simply check out the current version of REVO.
 
-
+* If WITH_ORRBEC_UVC is set, there is a conflict with the librealsense! To solve this issue, use WITH_ORBBEC_FFMPEG!

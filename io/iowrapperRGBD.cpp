@@ -36,15 +36,15 @@ IOWrapperRGBD::IOWrapperRGBD(const IOWrapperSettings& settings, const ImgPyramid
         I3D_LOG(i3d::info) << "After astra normal!";
         //orbbecSensor = std::unique_ptr<OrbbecAstraEngine>(&astra);
 #ifdef WITH_ORBBEC_FFMPEG
-        orbbecSensor = std::unique_ptr<OrbbecAstraEngineFFMPEG>(new OrbbecAstraEngineFFMPEG());
+        orbbecAstraProSensor = std::unique_ptr<OrbbecAstraProEngineFFMPEG>(new OrbbecAstraProEngineFFMPEG());
 #else
-        orbbecSensor = std::unique_ptr<OrbbecAstraEngine>(new OrbbecAstraEngine());
+        orbbecAstraProSensor = std::unique_ptr<OrbbecAstraEngine>(new OrbbecAstraEngine());
 #endif
-        mInitSuccess = orbbecSensor->isInitSuccess();
-        I3D_LOG(i3d::info) << "After astra normal!";
+        mInitSuccess = orbbecAstraProSensor->isInitSuccess();
+        I3D_LOG(i3d::info) << "After astra pro!";
     }
     else
-        this->orbbecSensor = NULL;
+        this->orbbecAstraProSensor = NULL;
 #endif
 #ifdef WITH_REALSENSE
     if (mSettings.READ_FROM_REALSENSE)
@@ -53,6 +53,16 @@ IOWrapperRGBD::IOWrapperRGBD(const IOWrapperSettings& settings, const ImgPyramid
     }
     else
         this->realSenseSensor = NULL;
+#endif
+#ifdef WITH_ORBBEC_ASTRA
+    if (mSettings.READ_FROM_ASTRA)
+    {
+        orbbecAstraSensor = std::unique_ptr<OrbbecAstraOpenNIEngine>(new OrbbecAstraOpenNIEngine());
+        mInitSuccess = orbbecAstraSensor->isInitSuccess();
+        I3D_LOG(i3d::info) << "Astra Sensor initialized!";
+    }
+    else orbbecAstraSensor = NULL;
+
 #endif
     if (mSettings.READ_FROM_DATASET())
     {
@@ -69,12 +79,12 @@ IOWrapperRGBD::IOWrapperRGBD(const IOWrapperSettings& settings, const ImgPyramid
     //if (!mFileReader.isFileOpen()) mQuitFlag = true;
 }
 
-void IOWrapperRGBD::generateImgPyramidFromAstra()
+void IOWrapperRGBD::generateImgPyramidFromAstraPro()
 {
 #ifdef WITH_ORBBEC_ASTRA_PRO
     while (this->mSettings.READ_FROM_ASTRA_PRO && !mFinish)
     {
-        if (this->orbbecSensor->getImages(rgb,depth,mSettings.DEPTH_SCALE_FACTOR))
+        if (this->orbbecAstraProSensor->getImages(rgb,depth,mSettings.DEPTH_SCALE_FACTOR))
         {
             auto start = Timer::getTime();
             nFrames++;
@@ -82,6 +92,71 @@ void IOWrapperRGBD::generateImgPyramidFromAstra()
             //there is a strange orbbec bug, where the first two lines of the "color" image are invalid
             rgb.row(2).copyTo(rgb.row(0));
             rgb.row(2).copyTo(rgb.row(1));
+            if (mSettings.DO_OUTPUT_IMAGES) writeImages(rgb,depth,nFrames);
+            I3D_LOG(i3d::info) << mSettings.DEPTH_SCALE_FACTOR;
+            //mPyrQueue.push(pyr);
+            std::unique_ptr<ImgPyramidRGBD> ptrTmp(std::unique_ptr<ImgPyramidRGBD>(new ImgPyramidRGBD(mPyrConfig,mCamPyr,rgb,depth,nFrames)));
+            {
+                std::unique_lock<std::mutex> lock(this->mtx);
+                mPyrQueue.push(std::move(ptrTmp));
+                I3D_LOG(i3d::error) << "ImgPyramid queued" << mPyrQueue.size();
+            }
+            auto end = Timer::getTime();
+            I3D_LOG(i3d::info) << "Reading image: " << nFrames << " in " << Timer::getTimeDiffMiS(start,end);
+        }
+        usleep(500);
+    }
+#else
+    I3D_LOG(i3d::error) << "Not compiled with Orbbec Astra support!";
+    exit(0);
+#endif
+}
+//void IOWrapperRGBD::adaptCannyValues()
+//{
+//    if (flagAdaptedThresholds) return;
+//    //Now, detect and count the edges;
+//    cv::Mat gray,edges;
+//    cv::cvtColor(rgb,gray,CV_BGRA2GRAY);
+//    const float upFactor = 1.2f, downFactor = 0.8f;
+//    int minEdges = 20000;
+//    int maxEdges = 25000;
+//    cannyThreshold1 = 150;
+//    cannyThreshold2= 100;
+//    while (!flagAdaptedThresholds)
+//    {
+//        cv::Canny(gray,edges,static_cast<int>(cannyThreshold1),static_cast<int>(cannyThreshold2),3,true);
+//        const int nEdges = cv::countNonZero(edges);
+//        I3D_LOG(i3d::info) << "Adapted Canny values: " << cannyThreshold1 << " " << cannyThreshold2 << "nEdges: " << nEdges;
+//        //we want to have between 15k and 20k edges
+//        if (nEdges >= minEdges && nEdges <= maxEdges)
+//            flagAdaptedThresholds = true;
+//        else
+//        {
+//            //if smaller than 15000, lower the threshold else raise it!
+//            cannyThreshold1 = (nEdges < minEdges ? cannyThreshold1*downFactor : cannyThreshold1*upFactor);
+//            cannyThreshold2 = (nEdges < minEdges ? cannyThreshold2*downFactor : cannyThreshold2*upFactor);
+//        }
+//    }
+//    mPyrConfig.cannyThreshold1 = static_cast<int>(cannyThreshold1);
+//    mPyrConfig.cannyThreshold2 = static_cast<int>(cannyThreshold2);
+//}
+void IOWrapperRGBD::generateImgPyramidFromAstra()
+{
+#ifdef WITH_ORBBEC_ASTRA
+    while (this->mSettings.READ_FROM_ASTRA && !mFinish)
+    {
+        if (this->orbbecAstraSensor->getImages(rgb,depth,mSettings.DEPTH_SCALE_FACTOR))
+        {
+            auto start = Timer::getTime();
+            nFrames++;
+            I3D_LOG(i3d::info) << "nFrames: " << nFrames;
+            //there is a strange orbbec bug, where the first two lines of the "color" image are invalid
+            rgb.row(2).copyTo(rgb.row(0));
+            rgb.row(2).copyTo(rgb.row(1));
+            if (mSettings.SKIP_FIRST_N_FRAMES > nFrames) //skips the first n Frames
+                continue;
+            //if (mSettings.DO_ADAPT_CANNY_VALUES) //try to find the correct Canny values during the first 10 frames
+            //    adaptCannyValues();
             if (mSettings.DO_OUTPUT_IMAGES) writeImages(rgb,depth,nFrames);
             I3D_LOG(i3d::info) << mSettings.DEPTH_SCALE_FACTOR;
             //mPyrQueue.push(pyr);

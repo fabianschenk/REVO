@@ -35,6 +35,9 @@
 #ifdef WITH_REALSENSE
     #include "realsensesensor.h"
 #endif
+#ifdef WITH_ORBBEC_ASTRA
+    #include "../orbbec_astra_pro/OrbbecAstraOpenNIEngine.h"
+#endif
 class IOWrapperSettings
 {
 public:
@@ -52,12 +55,15 @@ public:
         //image pyramid settings (camera matrix, resolutions,...)
         int inputType; //0 = dataset, 1 = ASTRA PRO, 2 = REAL SENSE
         cv::read(fs["INPUT_TYPE"],inputType,0);
-        READ_FROM_ASTRA_PRO = READ_FROM_REALSENSE = false;
+        READ_FROM_ASTRA_PRO = READ_FROM_REALSENSE = READ_FROM_ASTRA = false;
         switch (inputType) {
         case 1: READ_FROM_ASTRA_PRO = true;
                 if (nRuns > 0) isFinished = true;
                 break;
         case 2: READ_FROM_REALSENSE = true;
+                if (nRuns > 0) isFinished = true;
+                break;
+        case 3: READ_FROM_ASTRA = true;
                 if (nRuns > 0) isFinished = true;
                 break;
         //dataset
@@ -95,13 +101,19 @@ public:
             break;
         }
         //Ensure that it stops!
-        if ((READ_FROM_ASTRA_DATA || READ_FROM_REALSENSE) && nRuns>0)
-            isFinished = true;
+        if ((READ_FROM_ASTRA_DATA || READ_FROM_REALSENSE) && nRuns>0) isFinished = true;
         //TODO: make that work?
         cv::read(fs["READ_INTRINSICS_FROM_SENSOR"],READ_INTRINSICS_FROM_SENSOR,false);
         //only needed to skip auto exposure artifacts
         cv::read(fs["SKIP_FIRST_N_FRAMES"],SKIP_FIRST_N_FRAMES,0);
         cv::read(fs["READ_N_IMAGES"],READ_N_IMAGES,100000); //read at least 100000 images
+        //cv::read(fs["DO_ADAPT_CANNY_VALUES"],DO_ADAPT_CANNY_VALUES, true); //tries to guess the Canny values from the first frame!
+        cv::read(fs["DO_WAIT_AUTOEXP"],DO_WAIT_AUTOEXP, false); //skips the first 20 frames or so to avoid auto exposure problems
+        if (SKIP_FIRST_N_FRAMES < 20 && DO_WAIT_AUTOEXP)
+        {
+            SKIP_FIRST_N_FRAMES = 20;
+            I3D_LOG(i3d::warning) << "Skipping first 20 frames to avoid auto exposure problems!";
+        }
         if (!READ_INTRINSICS_FROM_SENSOR)
         {
             cv::read(fs["DEPTH_SCALE_FACTOR"],DEPTH_SCALE_FACTOR,1000.0f);
@@ -123,19 +135,20 @@ public:
     bool READ_INTRINSICS_FROM_SENSOR;
     bool READ_FROM_ASTRA_PRO;
     bool READ_FROM_REALSENSE;
+    bool READ_FROM_ASTRA;
     int SKIP_FIRST_N_FRAMES;
     int READ_N_IMAGES;
     float DEPTH_SCALE_FACTOR;
     bool useDepthTimeStamp;
+    //bool DO_ADAPT_CANNY_VALUES;
+    bool DO_WAIT_AUTOEXP;
     std::vector<std::string> datasets;
     cv::Size2i imgSize;
     std::string MainFolder;
     std::string subDataset;
     std::string associateFile;
-    //ImgPyramid::ImgPyramidConfig ;
     bool DO_OUTPUT_IMAGES;
     bool READ_FROM_ASTRA_DATA;
-    bool ICL_NUIM;
     bool isFinished;
 };
 
@@ -166,14 +179,19 @@ private:
     void generateImgPyramidFromFiles();
 #ifdef WITH_ORBBEC_ASTRA_PRO
     #ifdef WITH_ORBBEC_FFMPEG
-        std::unique_ptr<OrbbecAstraEngineFFMPEG> orbbecSensor;
+        std::unique_ptr<OrbbecAstraProEngineFFMPEG> orbbecAstraProSensor;
     #else
-        std::unique_ptr<OrbbecAstraEngine> orbbecSensor;
+        std::unique_ptr<OrbbecAstraEngine> orbbecAstraProSensor;
     #endif
 #endif
 #ifdef WITH_REALSENSE
     std::unique_ptr<RealsenseSensor> realSenseSensor;
 #endif
+#ifdef WITH_ORBBEC_ASTRA
+        std::unique_ptr<OrbbecAstraOpenNIEngine> orbbecAstraSensor;
+#endif
+    //void adaptCannyValues();
+    void generateImgPyramidFromAstraPro();
     void generateImgPyramidFromAstra();
     void generateImgPyramidFromRealSense();
     void writeImages(const cv::Mat& rgb, const cv::Mat depth, const float timestamp);
@@ -183,12 +201,17 @@ public:
     void generateImgPyramid()
     {
         if (mSettings.READ_FROM_ASTRA_PRO)
-            generateImgPyramidFromAstra();
+            generateImgPyramidFromAstraPro();
         else
         if (mSettings.READ_FROM_REALSENSE)
             generateImgPyramidFromRealSense();
         else
-            generateImgPyramidFromFiles();
+            if (mSettings.READ_FROM_ASTRA)
+            {
+                generateImgPyramidFromAstra();
+            }
+            else
+                generateImgPyramidFromFiles();
     }
     IOWrapperRGBD(const IOWrapperSettings &settings, const ImgPyramidSettings &mPyrSettings, const std::shared_ptr<CameraPyr>& camPyr);
     //~IOWrapperRGBD();

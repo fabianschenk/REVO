@@ -52,7 +52,7 @@ extern "C" {
 }
 #endif
 
-class OrbbecAstraEngineFFMPEG::PrivateData {
+class OrbbecAstraProEngineFFMPEG::PrivateData {
     public:
     PrivateData(void)
         : streams(NULL),
@@ -90,7 +90,7 @@ class OrbbecAstraEngineFFMPEG::PrivateData {
     std::condition_variable newRGBFrameCondition;
 };
 
-bool OrbbecAstraEngineFFMPEG::initFFMPEG_RGB()
+bool OrbbecAstraProEngineFFMPEG::initFFMPEG_RGB()
 {
     avdevice_register_all();
     avcodec_register_all();
@@ -197,10 +197,10 @@ bool OrbbecAstraEngineFFMPEG::initFFMPEG_RGB()
     data->exitReadFramesThread = false;
     imagesReadThread = 0;
     imagesGet = 0;
-    data->readRGBFrameThread = std::thread(&OrbbecAstraEngineFFMPEG::readFramesThread, this);
+    data->readRGBFrameThread = std::thread(&OrbbecAstraProEngineFFMPEG::readFramesThread, this);
     return true;
 }
-bool OrbbecAstraEngineFFMPEG::initOpenNIDepth()
+bool OrbbecAstraProEngineFFMPEG::initOpenNIDepth()
 {
     openni::Status rc = openni::STATUS_OK;
     cv::Point2i requested_imageSize_d(640,480);
@@ -266,7 +266,7 @@ bool OrbbecAstraEngineFFMPEG::initOpenNIDepth()
     return true;
 }
 
-OrbbecAstraEngineFFMPEG::OrbbecAstraEngineFFMPEG():
+OrbbecAstraProEngineFFMPEG::OrbbecAstraProEngineFFMPEG():
     init_openni(false),init_ffmpeg(false)
 {
     this->imageSize_d = cv::Size2i(0,0);
@@ -274,9 +274,10 @@ OrbbecAstraEngineFFMPEG::OrbbecAstraEngineFFMPEG():
 	data = new PrivateData();
     init_openni = initOpenNIDepth();
     init_ffmpeg = initFFMPEG_RGB();
+    I3D_LOG(i3d::info) << "init_ffmpeg: " << init_ffmpeg << " init_openni: " << init_openni;
 }
 
-OrbbecAstraEngineFFMPEG::~OrbbecAstraEngineFFMPEG()
+OrbbecAstraProEngineFFMPEG::~OrbbecAstraProEngineFFMPEG()
 {
     I3D_LOG(i3d::info) << "DESTRUCTOR called!! OrbbecAstraEngineFFMPEG";
 	if (data != NULL)
@@ -311,7 +312,7 @@ OrbbecAstraEngineFFMPEG::~OrbbecAstraEngineFFMPEG()
 	openni::OpenNI::shutdown();
 }
 
-bool OrbbecAstraEngineFFMPEG::getImages(cv::Mat& rgbImage, cv::Mat& rawDepthImage, const float depthScaleFactor)
+bool OrbbecAstraProEngineFFMPEG::getImages(cv::Mat& rgbImage, cv::Mat& rawDepthImage, const float depthScaleFactor)
 {
     auto start = Timer::getTime();
     if (!isInitSuccess())
@@ -326,9 +327,9 @@ bool OrbbecAstraEngineFFMPEG::getImages(cv::Mat& rgbImage, cv::Mat& rawDepthImag
 
     if (init_ffmpeg)
     {
+        I3D_LOG(i3d::info) << "init_ffmpeg";
         std::unique_lock<std::mutex> l(data->newRGBFrameLock);
         auto rgbTimeStart = Timer::getTime();
-
         //wait until new frame
         while(!data->newRGBFrame)
         {
@@ -343,7 +344,7 @@ bool OrbbecAstraEngineFFMPEG::getImages(cv::Mat& rgbImage, cv::Mat& rawDepthImag
         data->newRGBFrame = false;
         memcpy(rgbImage.data, data->rgb.data,sizeof(uchar)*data->rgb.total()*3);
         this->imagesGet++;
-        I3D_LOG(i3d::info) << "Waited for rgb image: " << Timer::getTimeDiffMiS(rgbTimeStart,rgbTimeEnd) << ": " <<  imagesGet << "/" << imagesReadThread;
+        //I3D_LOG(i3d::info) << "Waited for rgb image: " << Timer::getTimeDiffMiS(rgbTimeStart,rgbTimeEnd) << ": " <<  imagesGet << "/" << imagesReadThread;
         //cv::imwrite("rgb/"+std::to_string(imagesReadThread)+"_"+std::to_string(imagesGet)+"get.png",rgbImage);
     }
     auto endTime = Timer::getTime();
@@ -369,12 +370,12 @@ bool OrbbecAstraEngineFFMPEG::getImages(cv::Mat& rgbImage, cv::Mat& rawDepthImag
     return true; /*true*/;
 }
 
-bool OrbbecAstraEngineFFMPEG::hasMoreImages(void)
+bool OrbbecAstraProEngineFFMPEG::hasMoreImages(void)
 {
     return (data!=NULL);
 }
 
-void OrbbecAstraEngineFFMPEG::readFramesThread()
+void OrbbecAstraProEngineFFMPEG::readFramesThread()
 {
     int res;
     int frameFinished;
