@@ -46,6 +46,9 @@ public:
             I3D_LOG(i3d::error) << "Couldn't open settings file at location: " << settingsFile;
             exit(0);
         }
+        else
+            I3D_LOG(i3d::error) << "Reading from settings file at location: " << settingsFile;
+
         //image pyramid settings (camera matrix, resolutions,...)
         cv::read(dataF["GT_POSEREADER_ACTIVE"],GT_POSEREADER_ACTIVE,false);
         cv::read(dataF["INIT_FROM_LAST_POSE"],INIT_FROM_LAST_POSE,true);
@@ -53,6 +56,7 @@ public:
         cv::read(dataF["DO_RECORD_IMAGES"],DO_RECORD_IMAGES,false);
         cv::read(dataF["DO_USE_PANGOLIN_VIEWER"],DO_USE_PANGOLIN_VIEWER,true);
         cv::read(dataF["DO_SHOW_DEBUG_IMAGE"],DO_SHOW_DEBUG_IMAGE,false);
+        I3D_LOG(i3d::info) << "DO_SHOW_DEBUG_IMAGE = " << DO_SHOW_DEBUG_IMAGE;
         cv::read(dataF["DO_GENERATE_DENSE_PCL"],DO_GENERATE_DENSE_PCL,false);
         dataF.release();
     }

@@ -26,6 +26,7 @@
 #include <mutex>
 #include <opencv2/core/eigen.hpp>
 #include <Eigen/LU>
+
 namespace  REVOGui
 {
 using namespace std;

@@ -30,7 +30,7 @@
 #include <mutex>
 #include <memory>
 #include <queue>
-
+#include <Eigen/Eigen>
 //EIGEN_DEFINE_STL_VECTOR_SPECIALIZATION(Eigen::Matrix4d)
 
 namespace  REVOGui

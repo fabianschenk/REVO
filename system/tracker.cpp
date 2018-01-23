@@ -347,6 +347,7 @@ TrackerNew::TrackerStatus TrackerNew::trackFrames(Eigen::Matrix3f &R, Eigen::Vec
     I3D_LOG(i3d::error) << "FINAL AVG ERROR: " << error << " goodPtsEdge: " << resInfo.goodPtsEdges << "badPtsEdge: " << resInfo.badPtsEdges << " good/bad = "
                         << double(resInfo.goodPtsEdges)/double(resInfo.badPtsEdges) << " good / total"
                         << double(resInfo.goodPtsEdges)/double(resInfo.badPtsEdges+resInfo.goodPtsEdges);
+    I3D_LOG(i3d::error) << "Final R: " << R << " final t: " << T;
     if  (double(resInfo.goodPtsEdges)/double(resInfo.badPtsEdges) < 4) return TrackerNew::TRACKER_STATE_NEW_KF;
     return TrackerNew::TRACKER_STATE_OK;
 }

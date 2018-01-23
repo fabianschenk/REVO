@@ -14,14 +14,15 @@ CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
 CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 if(COMPILER_SUPPORTS_CXX11)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+     message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has C++11 support. Please use a different C++ compiler.")
 elseif(COMPILER_SUPPORTS_CXX0X)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+ 	message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 else()
         message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
 #thirdparty
-#INCLUDE_DIRECTORIES("thirdparty/sophus")
 
 OPTION(WITH_PANGOLIN_VIEWER "Build with Pangolin viewer?" ON)
 if (WITH_PANGOLIN_VIEWER)
@@ -125,8 +126,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${FLAGS}")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${FLAGS}")
 message("OpenCV: ${OpenCV_INCLUDE_DIRS}")
 find_package(Eigen3 REQUIRED)
+INCLUDE_DIRECTORIES("thirdparty/Sophus")
 include_directories(${EIGEN3_INCLUDE_DIRS})
 message("Eigen found: ${EIGEN3_INCLUDE_DIRS} ${EIGEN_INCLUDE_DIRS} ${Eigen_INCLUDE_DIRS}")
+
+
+
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 list(APPEND LIBS ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})

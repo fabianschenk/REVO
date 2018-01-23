@@ -18,7 +18,9 @@ So far, the framework has only been built and tested on the following system.
 * [Ubuntu 16.04, 15.10, 17.04](https://www.ubuntu.com/)
 * [OpenCV > 3](http://opencv.org/)
 * [Eigen > 3.3](http://eigen.tuxfamily.org/index.php?title=Main_Page)
-* [Sophus](https://github.com/strasdat/Sophus)
+
+
+[Sophus](https://github.com/strasdat/Sophus) is now part of this repository (in thirdparty/Sophus).
 
 Building on Windows and backwards compatibility might be added in the future.
 
